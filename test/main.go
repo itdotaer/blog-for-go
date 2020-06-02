@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"io/ioutil"
@@ -26,28 +25,17 @@ func main() {
 		ctx.View("index.html")
 	})
 	app.Get("/cpu", func(ctx iris.Context) {
-		list, err := ioutil.ReadDir("/sys/class/thermal/thermal_zone0")//要读取的目录地址DIR，得到列表
-		if err != nil {
-			fmt.Println("read dir error")
-			return
-		}
-		for _, info := range list { //遍历目录下的内容，获取文件详情，同os.Stat(filename)获取的信息
-			log.Println(info.Name())
-			if info.IsDir() == true {
-				log.Println("是目录")
-			}
-		}
 
 		data, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
 		log.Println("step two")
 		if err != nil {
-			log.Println("step three")
-			log.Println(data)
-			ctx.ViewData("CpuTemp", string(data))
-		} else {
 			log.Println("step four")
 			ctx.ViewData("CpuTemp", "-")
 			log.Println(err)
+		} else {
+			log.Println("step three")
+			log.Println(data)
+			ctx.ViewData("CpuTemp", string(data))
 		}
 
 		ctx.View("cpu.html")
