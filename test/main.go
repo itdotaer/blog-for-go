@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
+	"io/ioutil"
+	"log"
 	"strconv"
 )
 
@@ -22,6 +24,18 @@ func main() {
 		ctx.ViewData("Msg", "这是一条测试消息！")
 		ctx.View("index.html")
 	})
+	app.Get("/cpu", func(ctx iris.Context) {
+		data, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
+		if err != nil {
+			ctx.ViewData("CpuTemp", string(data))
+			log.Println(data)
+		} else {
+			log.Fatal(err)
+		}
+
+		ctx.View("cpu.html")
+	})
+
 	app.Get("/greeting/{userName}", func(ctx iris.Context) {
 		ctx.Writef("hello, %s", ctx.Params().Get("userName"))
 	})
