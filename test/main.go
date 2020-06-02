@@ -26,10 +26,13 @@ func main() {
 	})
 	app.Get("/cpu", func(ctx iris.Context) {
 		data, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
+		log.Println("step two")
 		if err != nil {
+			log.Println("step three")
 			log.Println(data)
 			ctx.ViewData("CpuTemp", string(data))
 		} else {
+			log.Println("step four")
 			ctx.ViewData("CpuTemp", "-")
 			log.Fatal(err)
 		}
