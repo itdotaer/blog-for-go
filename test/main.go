@@ -25,15 +25,12 @@ func main() {
 		ctx.View("index.html")
 	})
 	app.Get("/cpu", func(ctx iris.Context) {
-
-		data, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
-		log.Println("step two")
+		const path = "/sys/class/thermal/thermal_zone0/temp"
+		data, err := ioutil.ReadFile(path)
 		if err != nil {
-			log.Println("step four")
 			ctx.ViewData("CpuTemp", "-")
-			log.Println(err)
+			log.Fatalf("Failed to read cpu temperature form %q:%v", path, err)
 		} else {
-			log.Println("step three")
 			log.Println(data)
 			ctx.ViewData("CpuTemp", string(data))
 		}
