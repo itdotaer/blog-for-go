@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -28,12 +29,18 @@ func main() {
 		const path = "/sys/class/thermal/thermal_zone0/temp"
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
-			ctx.ViewData("CpuTemp", "-")
 			log.Fatalf("Failed to read cpu temperature form %q:%v", path, err)
-		} else {
-			log.Println(data)
-			ctx.ViewData("CpuTemp", string(data))
 		}
+
+		cpuTempStr := strings.TrimSpace(string(data))
+		cpuTempInt, err := strconv.Atoi(cpuTempStr)
+
+		if err != nil {
+			log.Fatalf("%q does not contains an integer: %v", path, err)
+		}
+
+		cpuTemp := float64(cpuTempInt) / 1000.0
+		ctx.ViewData("CpuTemp", cpuTemp)
 
 		ctx.View("cpu.html")
 	})
