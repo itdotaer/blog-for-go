@@ -16,7 +16,7 @@ const (
 	USER_NAME   = "root"
 	PASS_WORD   = "mysql"
 	HOST        = "172.29.145.2"
-	REMOTE_HOST = "172.17.0.2"
+	REMOTE_HOST = "172.17.0.3"
 	PORT        = "10008"
 	REMOTE_PORT = "3306"
 	DATABASE    = "blog"
