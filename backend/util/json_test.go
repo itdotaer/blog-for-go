@@ -8,7 +8,7 @@ import (
 
 type TestCls struct {
 	Name string
-	Age int
+	Age  int
 }
 
 func TestPrettyJSON(t *testing.T) {

@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"blog-for-go/datasource"
@@ -13,8 +13,6 @@ import (
 func main() {
 	app := iris.New()
 	app.Logger().SetLevel("debug")
-	//加载模板文件
-	app.RegisterView(iris.HTML("./web/views", ".html"))
 	// 注册控制器
 	// mvc.New(app.Party("/posts")).Handle(new(controllers.PostController))
 	//您还可以拆分您编写的代码以配置mvc.Application
