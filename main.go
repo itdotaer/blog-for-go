@@ -5,6 +5,7 @@ import (
 	"blog-for-go/repositories"
 	"blog-for-go/services"
 	"blog-for-go/web/controllers"
+	"blog-for-go/web/middlewares"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -19,6 +20,7 @@ func main() {
 	//您还可以拆分您编写的代码以配置mvc.Application
 	//使用`mvc.Configure`方法，如下所示。
 	mvc.Configure(app.Party("/posts"), posts)
+	mvc.Configure(app.Party("/users"), users)
 
 	app.Run(
 		//开启web服务
@@ -32,9 +34,19 @@ func main() {
 
 //注意mvc.Application，它不是iris.Application。
 func posts(app *mvc.Application) {
+	app.Router.Use(middlewares.Auth)
+
 	repo := repositories.NewPostRepo(datasource.MysqlDb)
 	postService := services.NewPostService(repo)
 
 	app.Register(postService)
 	app.Handle(new(controllers.PostController))
+}
+
+func users(app *mvc.Application) {
+	repo := repositories.NewUserRepo(datasource.MysqlDb)
+	userService := services.NewUserService(repo)
+
+	app.Register(userService)
+	app.Handle(new(controllers.UserController))
 }

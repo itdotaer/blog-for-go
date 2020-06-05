@@ -23,7 +23,13 @@ type postRepo struct {
 func (r *postRepo) Query(index int, size int) []datamodels.Post {
 	// 通过切片存储
 	posts := make([]datamodels.Post, 0)
-	rows, _ := r.source.Query("SELECT * FROM `post` limit ?,?", index, size)
+
+	idx := 0
+	if index > 0 {
+		idx = (index - 1) * size
+	}
+
+	rows, _ := r.source.Query("SELECT * FROM `post` limit ?,?", idx, size)
 
 	// 遍历
 	var post datamodels.Post
@@ -37,7 +43,7 @@ func (r *postRepo) Query(index int, size int) []datamodels.Post {
 }
 
 func (r *postRepo) Insert(post datamodels.Post) bool {
-	ret, _ := r.source.Exec("insert INTO `post`(title, description, post_user, content, create_user, update_user) values(?,?,?,?,?,?)",
+	ret, _ := r.source.Exec("INSERT INTO `post`(title, description, post_user, content, create_user, update_user) values(?,?,?,?,?,?)",
 		&post.Title, &post.Description, &post.PostUser, &post.Content, &post.CreateUser, &post.UpdateUser)
 
 	//插入数据的主键id

@@ -1,8 +1,8 @@
 package datasource
 
 import (
+	"blog-for-go/util"
 	"database/sql"
-	"flag"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -15,9 +15,10 @@ var MysqlDbErr error
 const (
 	USER_NAME   = "root"
 	PASS_WORD   = "mysql"
-	HOST        = "172.21.42.9"
+	HOST        = "172.29.145.2"
 	REMOTE_HOST = "172.17.0.2"
-	PORT        = "10000"
+	PORT        = "10008"
+	REMOTE_PORT = "3306"
 	DATABASE    = "blog"
 	CHARSET     = "utf8"
 )
@@ -25,17 +26,15 @@ const (
 // 初始化链接
 func init() {
 	log.Println("mysql init")
-	// 解析启动模式
-	mode := flag.String("mode", "local", "get service start mode(exp: local, remote")
-	flag.Parse()
-	log.Println("mode", *mode)
 
 	host := HOST
-	if *mode == "remote" {
+	port := PORT
+	if util.Mode == "remote" {
 		host = REMOTE_HOST
+		port = REMOTE_PORT
 	}
 
-	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", USER_NAME, PASS_WORD, host, PORT, DATABASE, CHARSET)
+	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", USER_NAME, PASS_WORD, host, port, DATABASE, CHARSET)
 
 	// 打开连接失败
 	MysqlDb, MysqlDbErr = sql.Open("mysql", dbDSN)
