@@ -8,6 +8,7 @@ import (
 
 type PostRepo interface {
 	Query(index int, size int) []datamodels.Post
+	QueryById(id int64) datamodels.Post
 	Insert(post datamodels.Post) bool
 	Update(post datamodels.Post) bool
 }
@@ -40,6 +41,21 @@ func (r *postRepo) Query(index int, size int) []datamodels.Post {
 	}
 
 	return posts
+}
+
+func (r *postRepo) QueryById(id int64) datamodels.Post {
+	row := r.source.QueryRow("SELECT * FROM `post` WHERE id = ?", id)
+
+	// 遍历
+	var post datamodels.Post
+	err := row.Scan(&post.Id, &post.Title, &post.PostUser, &post.Description, &post.Content,
+		&post.CreateTime, &post.UpdateTime, &post.CreateUser, &post.UpdateUser)
+
+	if err != nil {
+		log.Println("query post by id error", err)
+	}
+
+	return post
 }
 
 func (r *postRepo) Insert(post datamodels.Post) bool {

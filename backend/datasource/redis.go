@@ -12,8 +12,8 @@ var Err error
 var Ctx context.Context
 
 const (
-	REDIS_HOST        = "172.29.145.2"
-	REDIS_PORT        = "10007"
+	REDIS_HOST        = "192.168.43.32"
+	REDIS_PORT        = "10000"
 	REDIS_REMOTE_HOST = "172.17.0.2"
 	REDIS_REMOTE_PORT = "6379"
 	REDIS_PASS_WORD   = ""

@@ -6,6 +6,8 @@ import (
 	"blog-for-go/services"
 	"blog-for-go/web/controllers"
 	"blog-for-go/web/middlewares"
+
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -13,12 +15,14 @@ import (
 func main() {
 	app := iris.New()
 	app.Logger().SetLevel("debug")
-	// 注册控制器
-	// mvc.New(app.Party("/posts")).Handle(new(controllers.PostController))
-	//您还可以拆分您编写的代码以配置mvc.Application
-	//使用`mvc.Configure`方法，如下所示。
-	mvc.Configure(app.Party("/posts"), posts)
-	mvc.Configure(app.Party("/users"), users)
+
+	crs := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, //允许通过的主机名称
+		AllowCredentials: true,
+	})
+
+	mvc.Configure(app.Party("/posts", crs), posts)
+	mvc.Configure(app.Party("/users", crs), users)
 
 	app.Run(
 		//开启web服务

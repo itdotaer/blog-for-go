@@ -15,9 +15,9 @@ var MysqlDbErr error
 const (
 	USER_NAME   = "root"
 	PASS_WORD   = "mysql"
-	HOST        = "172.29.145.2"
+	HOST        = "192.168.43.32"
 	REMOTE_HOST = "172.17.0.3"
-	PORT        = "10008"
+	PORT        = "10001"
 	REMOTE_PORT = "3306"
 	DATABASE    = "blog"
 	CHARSET     = "utf8"

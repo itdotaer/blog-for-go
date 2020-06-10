@@ -4,10 +4,13 @@ import (
 	"blog-for-go/cache"
 	"blog-for-go/web/models"
 	"crypto/md5"
+	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/kataras/iris/v12"
 	"time"
+
+	"github.com/kataras/iris/v12"
 )
 
 const (
@@ -17,8 +20,12 @@ const (
 
 func Auth(ctx iris.Context) {
 	auth := ctx.GetCookie(AUTH_KEY)
-	// 看看redis里有没有
-	name := cache.Get(auth)
+
+	name := ""
+	if auth != "" {
+		// 看看redis里有没有
+		name = cache.Get(auth)
+	}
 
 	if name == "" {
 		// 没有权限
@@ -33,9 +40,27 @@ func Auth(ctx iris.Context) {
 
 func Login(ctx iris.Context, name string) {
 	data := []byte(name)
-	hash := md5.Sum(data)
+	b := make([]byte, 10)
+	rand.Read(b)
+
+	hash := md5.Sum([]byte(string(data) + string(b)))
 
 	hashStr := fmt.Sprintf("%x", hash)
 	ctx.SetCookieKV(AUTH_KEY, hashStr, iris.CookieExpires(time.Hour))
 	cache.Set(hashStr, name, EXP)
+}
+
+func GetUserName(ctx iris.Context) (name string, err error) {
+	auth := ctx.GetCookie(AUTH_KEY)
+	name = ""
+	if auth != "" {
+		// 看看redis里有没有
+		name = cache.Get(auth)
+	}
+
+	if name == "" {
+		err = errors.New("user not login")
+	}
+
+	return
 }

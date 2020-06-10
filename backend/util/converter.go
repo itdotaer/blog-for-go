@@ -13,6 +13,8 @@ func ConvertToVM(post datamodels.Post) models.Post {
 	viewPost.Description = post.Description
 	viewPost.PostUser = post.PostUser
 	viewPost.Content = post.Content
+	viewPost.CreateTime = post.CreateTime
+	viewPost.UpdateTime = post.UpdateTime
 
 	return viewPost
 }

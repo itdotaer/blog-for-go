@@ -5,11 +5,13 @@ import (
 	"blog-for-go/datamodels"
 	"blog-for-go/services"
 	"blog-for-go/util"
+	"blog-for-go/web/middlewares"
 	"blog-for-go/web/models"
 	"encoding/json"
 	"fmt"
-	"github.com/kataras/iris/v12"
 	"log"
+
+	"github.com/kataras/iris/v12"
 )
 
 const (
@@ -50,6 +52,25 @@ func (c *PostController) Get(ctx iris.Context) models.Resp {
 	return models.Resp{Success: true, Code: "true", Data: data}
 }
 
+func (c *PostController) GetBy(id int64) models.Resp {
+	key := fmt.Sprintf("post_%d", id)
+	postStr := cache.Get(key)
+
+	var post datamodels.Post
+	json.Unmarshal([]byte(postStr), &post)
+
+	if post.Id == 0 {
+		post = c.Service.QueryById(id)
+
+		if post.Id > 0 {
+			postsBytes, _ := json.Marshal(post)
+			cache.Set(key, string(postsBytes), 100)
+		}
+	}
+
+	return models.Resp{Success: true, Code: "true", Data: util.ConvertToVM(post)}
+}
+
 func (c *PostController) Post(ctx iris.Context) models.Resp {
 	viewPost := &models.Post{}
 
@@ -59,8 +80,14 @@ func (c *PostController) Post(ctx iris.Context) models.Resp {
 		return models.Resp{Success: false, Code: "false", Msg: "post data wrong", Data: nil}
 	}
 
+	name, err1 := middlewares.GetUserName(ctx)
+	if err != nil {
+		log.Println(err1.Error())
+		return models.Resp{Success: false, Code: "false", Msg: err1.Error(), Data: nil}
+	}
+
 	// insert or update
-	rs := c.Service.Update(util.ConvertToDM(*viewPost))
+	rs := c.Service.Update(util.ConvertToDM(*viewPost), name)
 
 	return models.Resp{Success: rs, Code: "true", Msg: "ok", Data: nil}
 }
